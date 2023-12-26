@@ -16,12 +16,34 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Restore'
   inputs:
     command: 'restore'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Dotnet Publish'
   inputs:
     command: 'publish'
     publishWebProjects: true
 
+- task: Docker@2
+  displayName: 'Docker login'
+  inputs:
+    containerRegistry: 'dockerconnect'
+    command: 'login'
+
+- task: Docker@2
+  displayName: 'Image build'
+  inputs:
+    containerRegistry: 'dockerconnect'
+    repository: 'deepika210/dotnetproj'
+    command: 'build'
+    Dockerfile: '**/Dockerfile'
+
+- task: Docker@2
+  displayName: 'Image Push'
+  inputs:
+    containerRegistry: 'dockerconnect'
+    repository: 'deepika210/dotnetproj'
+    command: 'push'
